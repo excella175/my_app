@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:intl/intl.dart';
+import 'login_register.dart';
+import 'home_screen.dart';
 
 void main() {
+  // Initialize date formatting for Indonesian locale
+  Intl.defaultLocale = 'id_ID';
   runApp(const MyApp());
 }
 
@@ -11,6 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const SplashWithImageFade(),
     );
   }
@@ -39,9 +46,16 @@ class _SplashWithImageFadeState extends State<SplashWithImageFade>
 
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
 
-    // Delay 600ms sebelum logo muncul
+    // Delay 1000ms before logo appears
     Future.delayed(const Duration(milliseconds: 1000), () {
       _controller.forward();
+    });
+
+    // Navigate to LoginScreen after splash finishes (3 seconds total)
+    Timer(const Duration(milliseconds: 3000), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
     });
   }
 
@@ -58,7 +72,24 @@ class _SplashWithImageFadeState extends State<SplashWithImageFade>
       body: Center(
         child: FadeTransition(
           opacity: _animation,
-          child: Image.asset('assets/images/matpres_logo.jpg', width: 150),
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: const Color(0xFF8DD3D3), // Turquoise background
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: const Center(
+              child: Text(
+                "M",
+                style: TextStyle(
+                  fontSize: 60,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
