@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'login_register.dart';
 import 'home_screen.dart';
 
-void main() {
+void main() async {
+  // Ensure Flutter is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Initialize date formatting for Indonesian locale
+  await initializeDateFormatting('id_ID', null);
   Intl.defaultLocale = 'id_ID';
+
   runApp(const MyApp());
 }
 
@@ -17,7 +23,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       home: const SplashWithImageFade(),
     );
   }
@@ -27,13 +35,13 @@ class SplashWithImageFade extends StatefulWidget {
   const SplashWithImageFade({super.key});
 
   @override
-  State<SplashWithImageFade> createState() => _SplashWithImageFadeState();
+  State createState() => _SplashWithImageFadeState();
 }
 
 class _SplashWithImageFadeState extends State<SplashWithImageFade>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _animation;
+  late Animation _animation;
 
   @override
   void initState() {
@@ -68,26 +76,71 @@ class _SplashWithImageFadeState extends State<SplashWithImageFade>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF282C2B),
-      body: Center(
-        child: FadeTransition(
-          opacity: _animation,
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: const Color(0xFF8DD3D3), // Turquoise background
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: const Center(
-              child: Text(
-                "M",
-                style: TextStyle(
-                  fontSize: 60,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF1A237E), // Deep blue (matches login screen)
+              Color(0xFF2196F3), // Lighter blue (matches login screen)
+            ],
+          ),
+        ),
+        child: Center(
+          child: FadeTransition(
+            opacity: _animation as Animation<double>,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo circle with shadow - now with image
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(60),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 15,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(60),
+                    child: Image.asset(
+                      'assets/images/logo.png', // Ganti dengan path logo 
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.contain, // atau BoxFit.cover sesuai kebutuhan
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(height: 25),
+                // MATPRES text
+                const Text(
+                  "MATPRES",
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 2.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "Matsaka Presensi",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.white70,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
